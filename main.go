@@ -2,19 +2,23 @@ package main
 
 import (
 	"github.com/alapisco/go_mods/models"
-	"fmt"
 	"strconv"
 	"strings"
 	"log"
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"bufio"
+	"os"
 )
 
 
-func main(){
 
 
-
-
+func getPokemons(c *gin.Context) {
+	pokemons := parseFile("data/pokemon.csv")
+    c.IndentedJSON(http.StatusOK, pokemons)
 }
+
 func check(e error) {
     if e != nil {
 		log.Printf("Se obtuvo error %s", e)
@@ -22,9 +26,29 @@ func check(e error) {
     }
 }
 
-func parseFile(file string) [] models.Pokemon {
-	fmt.Println()
-	return nil
+func parseFile(file string) []models.Pokemon {
+
+	pokemons := make([]models.Pokemon,0)
+	
+	f, err := os.Open(file)
+    check(err)
+
+	fileScanner := bufio.NewScanner(f)
+ 
+    fileScanner.Split(bufio.ScanLines)
+  
+	index := 0
+    for fileScanner.Scan() {
+		index++
+		if index > 1 {
+			line := fileScanner.Text()
+			myPokemon := textLineToPokemon(line)
+			pokemons = append(pokemons, myPokemon)
+		}
+    }
+  
+    f.Close()
+	return pokemons
 }
 
 func textLineToPokemon(line string) models.Pokemon{
@@ -81,4 +105,13 @@ func textLineToPokemon(line string) models.Pokemon{
 	}
 
 	return myPokemon
+}
+
+func main(){
+
+	router := gin.Default()
+    router.GET("/pokemons", getPokemons)
+    router.Run("localhost:8080")
+
+
 }

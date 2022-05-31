@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"github.com/alapisco/go_mods/models"
+	"net/http"
 )
 
 func check(e error) {
@@ -97,7 +98,8 @@ func textLineToPokemon(line string) models.Pokemon{
 }
 
 func GetPokemons(c *gin.Context) {
-
+	pokemons := parseFile("data/pokemon.csv")
+    c.IndentedJSON(http.StatusOK, pokemons)
 }
 
 func GetPokemonById(c *gin.Context) {
