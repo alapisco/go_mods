@@ -1,35 +1,20 @@
 package main
 
 import (
-	"bufio"
-	"log"
-	"net/http"
-	"os"
+	"github.com/alapisco/go_mods/models"
+	"fmt"
 	"strconv"
 	"strings"
-
-	"github.com/gin-gonic/gin"
+	"log"
 )
 
-type pokemon struct {
-	ID			int		`json:"id"`
-	NAME 		string	`json:"name"`
-	TYPE1 		string	`json:"type1"`
-	TYPE2 		string	`json:"type2"`
-	TOTAL		int		`json:"total"`
-	HP			int		`json:"hp"`
-	ATTACK		int		`json:"attack"`
-	DEFENSE		int		`json:"defendse"`
-	SPATK		int		`json:"sp_atk"`
-	SPDEF		int		`json:"sp_def"`
-	SPEED		int		`json:"speed"`
-	GENERATION	int		`json:"generation"`
-	LEGENDARY	bool	`json:"legendary"`
+
+func main(){
+
+
+
+
 }
-
-
-// Panic aborta la ejecucion . Al recibir error usar log.error
-// https://github.com/sirupsen/logrus
 func check(e error) {
     if e != nil {
 		log.Printf("Se obtuvo error %s", e)
@@ -37,32 +22,12 @@ func check(e error) {
     }
 }
 
-func parseFile(file string) []pokemon {
-
-	pokemons := make([]pokemon,0)
-	
-	f, err := os.Open(file)
-    check(err)
-
-	fileScanner := bufio.NewScanner(f)
- 
-    fileScanner.Split(bufio.ScanLines)
-  
-	index := 0
-    for fileScanner.Scan() {
-		index++
-		if index > 1 {
-			line := fileScanner.Text()
-			myPokemon := textLineToPokemon(line)
-			pokemons = append(pokemons, myPokemon)
-		}
-    }
-  
-    f.Close()
-	return pokemons
+func parseFile(file string) [] models.Pokemon {
+	fmt.Println()
+	return nil
 }
 
-func textLineToPokemon(line string) pokemon{
+func textLineToPokemon(line string) models.Pokemon{
 
 	values := strings.Split(line, ",")
 	id, err := strconv.Atoi(values[0])
@@ -99,7 +64,7 @@ func textLineToPokemon(line string) pokemon{
 	legendary, err := strconv.ParseBool(values[12])
 	check(err)
 
-	myPokemon := pokemon {
+	myPokemon := models.Pokemon {
 		ID: id,
 		NAME: name,
 		TYPE1: type1,
@@ -116,59 +81,4 @@ func textLineToPokemon(line string) pokemon{
 	}
 
 	return myPokemon
-}
-
-// No poner global.  
-//var pokemons = parseFile("data/pokemon.csv")
-
-
-// Go solo es pase por copia 
-
-// Manejar excepcion en parsefile , para asegurarnos que regrese pokemon o error si algo pasa
-
-
-func getPokemons(c *gin.Context) {
-	pokemons := parseFile("data/pokemon.csv")
-    c.IndentedJSON(http.StatusOK, pokemons)
-}
-
-func getPokemonById(c *gin.Context) {
-	pokemons := parseFile("data/pokemon.csv")
-    idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
-	check(err)
-	for _, p := range pokemons {
-		if p.ID == id {
-			c.IndentedJSON(http.StatusOK, p)
-			return
-		}
-	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Pokemon not found"})
-}
-
-// ?filter=legendary  usar "/pokemons" y obtener de query param
-
-// Implementar filtros mediante query params
-
-func getLegendaryPokemons(c *gin.Context) {
-	pokemons := parseFile("data/pokemon.csv")
-	legendaryPokemons := make([]pokemon,0)
-	for _, p := range pokemons {
-		if p.LEGENDARY {
-			legendaryPokemons = append(legendaryPokemons, p)
-		}
-	}
-	if len(legendaryPokemons) > 0 {
-		c.IndentedJSON(http.StatusOK, legendaryPokemons)
-	} else {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "No Legendary Pokemons found"})
-	}
-}
-
-func main(){
-	router := gin.Default()
-    router.GET("/pokemons", getPokemons)
-	router.GET("/pokemons/:id", getPokemonById)
-	router.GET("/pokemons/legendary", getLegendaryPokemons)
-    router.Run("localhost:8080")
 }
