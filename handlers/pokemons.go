@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"models"
 	"bufio"
 	"os"
 	"strconv"
