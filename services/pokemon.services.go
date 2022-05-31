@@ -1,13 +1,11 @@
-package handlers
+package services
 
 import (
-	"github.com/gin-gonic/gin"
 	"bufio"
 	"os"
 	"strconv"
 	"strings"
 	"github.com/alapisco/go_mods/models"
-	"net/http"
 	"log"
 )
 
@@ -17,8 +15,8 @@ func checkError(e error) {
     }
 }
 
-func parseFile(file string) []models.Pokemon {
-
+func GetPokemonsFromCSV() []models.Pokemon {
+	file := "data/pokemon.csv"
 	pokemons := make([]models.Pokemon,0)
 	
 	f, err := os.Open(file)
@@ -96,17 +94,4 @@ func textLineToPokemon(line string) models.Pokemon{
 	}
 
 	return myPokemon
-}
-
-func GetPokemons(c *gin.Context) {
-	pokemons := parseFile("data/pokemon.csv")
-    c.IndentedJSON(http.StatusOK, pokemons)
-}
-
-func GetPokemonById(c *gin.Context) {
-	//isbn := c.Param("isbn")
-}
-
-func GetLegendaryPokemons(c *gin.Context) {
-
 }

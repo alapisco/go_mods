@@ -10,9 +10,9 @@ func Setup() *gin.Engine {
 
 	api := router.Group("/api")
 	{
-		api.GET("/pokemons", GetPokemons)
-		api.GET("/pokemons/:id", GetPokemonById)
-		api.POST("/pokemons/legendary", GetLegendaryPokemons)
+		api.GET("/pokemons", handlers.GetPokemons)
+		api.GET("/pokemons/:id", handlers.GetPokemonById)
+		api.POST("/pokemons/legendary", handlers.GetLegendaryPokemons)
 	}
 	return router
 }
