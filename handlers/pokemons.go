@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"github.com/alapisco/go_mods/services"
+	"strconv"
 )
 
 func GetPokemons(c *gin.Context) {
@@ -12,9 +13,21 @@ func GetPokemons(c *gin.Context) {
 }
 
 func GetPokemonById(c *gin.Context) {
-	//isbn := c.Param("isbn")
-}
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
 
-func GetLegendaryPokemons(c *gin.Context) {
+	if err != nil {
+		c.IndentedJSON(http.StatusOK, "Invalid ID " + idStr)
+		return
+    }
+
+	pokemon := services.GetPokemonByID(id)
+
+	if pokemon != nil {
+		c.IndentedJSON(http.StatusOK, pokemon)
+		return
+    }
+
+	c.IndentedJSON(http.StatusOK, "Pokemon with ID " + idStr + " not found")
 
 }

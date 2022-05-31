@@ -15,6 +15,18 @@ func checkError(e error) {
     }
 }
 
+func GetPokemonByID(id int) *models.Pokemon {
+
+	pokemons := GetPokemonsFromCSV()
+	
+	for _, p := range pokemons {
+		if p.ID == id {
+			return &p
+		}
+	}
+	return nil
+}
+
 func GetPokemonsFromCSV() []models.Pokemon {
 	file := "data/pokemon.csv"
 	pokemons := make([]models.Pokemon,0)
