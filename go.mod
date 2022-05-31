@@ -1,4 +1,4 @@
-module modules/pokemon-service
+module github.com/alapisco/go_mods
 
 go 1.18
 
